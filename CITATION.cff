@@ -1,0 +1,9 @@
+cff-version: 1.2.0
+title: "China Agricultural Land Transformation Analysis Code"
+message: "If you use this code, please cite the associated manuscript and this repository."
+authors:
+  - family-names: Wang
+    given-names: Shiyuan
+version: 1.0.0
+date-released: 2026-06-07
+license: MIT

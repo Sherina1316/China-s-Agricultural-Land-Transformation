@@ -1,0 +1,27 @@
+# Example configuration for reproducing the agricultural land transformation workflow.
+# Copy this file to configs/config.yaml and edit paths before running scripts.
+
+project:
+  start_year: 2000
+  end_year: 2023
+  stable_threshold_percent: 5.0
+
+paths:
+  raw_cacd_rasters: data/raw/CACD
+  province_boundaries: data/boundaries/china_provinces.shp
+  crop_sown_area: data/raw/crop_sown_area_by_province.csv
+  pca_indicator_table: data/processed/pca_indicators.csv
+  gtwr_model_table: data/processed/gtwr_model_table.csv
+  outputs: outputs
+
+variables:
+  explanatory_components: [SSN, GM, IPLG, RW]
+  response_variables: [CWE, CS, HQ, NDR, SDR, RHI, CP]
+  coordinate_columns:
+    longitude: longitude
+    latitude: latitude
+    time: year
+
+regression:
+  spatial_grid: [0.08, 0.10, 0.11, 0.12, 0.13, 0.15, 0.20, 0.30]
+  temporal_grid: [0.10, 0.20, 0.27, 0.33, 0.50, 0.80]

@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.env
+.pytest_cache/
+
+# Data and outputs
+/data/raw/
+/data/processed/
+/outputs/
+*.tif
+*.tiff
+*.shp
+*.dbf
+*.shx
+*.prj
+*.cpg
+*.gpkg
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

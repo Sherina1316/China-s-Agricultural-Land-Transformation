@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "china-agricultural-land-transformation"
+version = "1.0.0"
+description = "Reproducible analysis code for cropland extent, crop sown-area dynamics, PCA, GTWR/TWR and uncertainty diagnostics in China."
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{name = "Shiyuan Wang"}]
+license = {text = "MIT"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
