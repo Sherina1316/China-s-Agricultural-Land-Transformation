@@ -1,27 +1,28 @@
-# Example configuration for reproducing the agricultural land transformation workflow.
-# Copy this file to configs/config.yaml and edit paths before running scripts.
-
 project:
+  name: China agricultural land-use transformation
   start_year: 2000
   end_year: 2023
   stable_threshold_percent: 5.0
 
 paths:
-  raw_cacd_rasters: data/raw/CACD
-  province_boundaries: data/boundaries/china_provinces.shp
+  output_dir: outputs
+  # Option A: use a prepared province-by-year cropland table.
+  prepared_cropland_table: data/raw/cropland_extent_by_province_prepared.csv
+  cropland_extent_processed: data/processed/cropland_extent_by_province.csv
+  # Option B: extract from annual CACD rasters instead of prepared table.
+  raw_cacd_rasters: data/raw/CACD_rasters
+  province_boundaries: data/raw/boundaries/china_provinces.shp
   crop_sown_area: data/raw/crop_sown_area_by_province.csv
   pca_indicator_table: data/processed/pca_indicators.csv
   gtwr_model_table: data/processed/gtwr_model_table.csv
-  outputs: outputs
+
+parameters:
+  cropland_values: "1"
 
 variables:
-  explanatory_components: [SSN, GM, IPLG, RW]
+  explanatory_variables: [SSN, GM, IPLG, RW]
   response_variables: [CWE, CS, HQ, NDR, SDR, RHI, CP]
   coordinate_columns:
     longitude: longitude
     latitude: latitude
-    time: year
-
-regression:
-  spatial_grid: [0.08, 0.10, 0.11, 0.12, 0.13, 0.15, 0.20, 0.30]
-  temporal_grid: [0.10, 0.20, 0.27, 0.33, 0.50, 0.80]
+  time_column: year

@@ -1,22 +1,34 @@
 # Data directory
 
-Raw datasets are not distributed in this repository because most source data are third-party products or official statistics. Place input files in this directory following the templates.
+The repository does not redistribute third-party remote-sensing products or official statistical yearbooks. Place data files in the following structure before running the workflow.
 
-Required inputs:
+```text
+data/raw/
+  crop_sown_area_by_province.csv
+  cropland_extent_by_province_prepared.csv   # optional if using prepared CACD-derived table
+  CACD_rasters/                              # optional if extracting from rasters
+  boundaries/china_provinces.shp             # optional if extracting from rasters
+data/processed/
+  pca_indicators.csv
+  gtwr_model_table.csv
+```
 
-1. **CACD-derived annual cropland extent rasters**  
-   Binary annual GeoTIFFs where cropland pixels are coded as `1` and non-cropland pixels as `0`. The repository supports China’s 30-m Annual Cropland Dataset (CACD) and its 2022--2023 extension.
+## Province-by-year tables
 
-2. **Province boundary file**  
-   A shapefile or GeoPackage containing mainland China provincial boundaries.
+Cropland extent and crop sown-area tables should follow:
 
-3. **Official crop sown-area table**  
-   Province-by-year table with columns `Province, 2000, 2001, ..., 2023`; values should be in thousand hectares (kha), unless a scale factor is applied before use.
+```text
+Province,2000,2001,...,2023
+```
 
-4. **PCA indicator table**  
-   Numeric indicators used to construct PCA-derived agricultural-use components.
+Values should be in kha unless `--input-scale-to-kha` is specified.
 
-5. **GTWR/TWR modelling table**  
-   Province-year table containing coordinates, year, PCA components and response variables.
+## Model table
 
-See `data/templates/` for minimal input examples.
+The GTWR/TWR table should contain:
+
+```text
+Province, year, longitude, latitude, climate_zone, SSN, GM, IPLG, RW, CWE, CS, HQ, NDR, SDR, RHI, CP
+```
+
+The template files in `data/templates/` show minimal accepted column names.

@@ -1,3 +1,2 @@
-Province,year,longitude,latitude,SSN,GM,IPLG,RW,CWE,CS,HQ,NDR,SDR,RHI,CP
-Anhui,2000,117.2,31.8,0,0,0,0,0,0,0,0,0,0,0
-Anhui,2005,117.2,31.8,0,0,0,0,0,0,0,0,0,0,0
+Province,year,longitude,latitude,climate_zone,SSN,GM,IPLG,RW,CWE,CS,HQ,NDR,SDR,RHI,CP
+Heilongjiang,2000,126.6,45.7,MSHR,0,0,0,0,0,0,0,0,0,0,0

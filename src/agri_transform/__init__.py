@@ -1,3 +1,4 @@
-"""Tools for reproducing the China agricultural land transformation analysis."""
+"""Reproducible workflow for China agricultural land transformation analysis."""
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
+

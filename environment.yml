@@ -1,0 +1,16 @@
+name: china-agricultural-land-transformation
+channels:
+  - conda-forge
+dependencies:
+  - python>=3.10
+  - numpy
+  - pandas
+  - scipy
+  - scikit-learn
+  - matplotlib
+  - openpyxl
+  - pyyaml
+  - geopandas
+  - rasterio
+  - rasterstats
+  - pip

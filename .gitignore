@@ -1,19 +1,21 @@
 # Python
 __pycache__/
 *.py[cod]
+*.egg-info/
 .venv/
 .env
-.pytest_cache/
+.ipynb_checkpoints/
 
 # Data and outputs
-/data/raw/
-/data/processed/
-/outputs/
+data/raw/
+data/boundaries/
+data/processed/
+outputs/
 *.tif
 *.tiff
 *.shp
-*.dbf
 *.shx
+*.dbf
 *.prj
 *.cpg
 *.gpkg
