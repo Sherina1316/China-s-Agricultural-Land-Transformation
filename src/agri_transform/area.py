@@ -113,7 +113,7 @@ def compute_province_cropland_area(
     raster_paths = find_annual_rasters(raster_dir, start_year, end_year)
     gdf = gpd.read_file(province_shp)
     if province_field is None:
-        candidates = ["Province", "province", "name", "NAME", "省份", "地区"]
+        candidates = ["Province", "province", "name", "NAME"]
         province_field = next((c for c in candidates if c in gdf.columns), None)
     if province_field is None:
         raise ValueError("Could not identify a province name field. Please pass province_field explicitly.")

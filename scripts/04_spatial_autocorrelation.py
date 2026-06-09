@@ -1,16 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Detailed global Moran's I workflow for socio-environmental response variables.
+Detailed global Moran's I workflow for socio-environmental outcome variables.
 
 The manuscript uses spatial autocorrelation diagnostics to decide whether a
-spatially weighted model is appropriate for each response variable. This script
+spatially weighted model is appropriate for each outcome variable. This script
 implements global Moran's I with transparent k-nearest-neighbour weights and an
 optional permutation test.
 
 Expected input
 --------------
-A CSV/XLSX table containing coordinates and response variables, for example:
+A CSV/XLSX table containing coordinates and outcome variables, for example:
 
     Province, year, longitude, latitude, CWE, CS, HQ, NDR, SDR, RHI, CP
 

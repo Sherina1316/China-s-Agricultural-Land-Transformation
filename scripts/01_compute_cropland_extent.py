@@ -54,7 +54,7 @@ def find_raster_for_year(raster_dir: Path, year: int, suffixes: Sequence[str] = 
 def infer_province_field(gdf, requested: str | None = None) -> str:
     if requested and requested in gdf.columns:
         return requested
-    candidates = ["Province", "province", "NAME", "Name", "省", "省名", "NAME_1", "NL_NAME_1"]
+    candidates = ["Province", "province", "NAME", "Name", "NAME_1", "NL_NAME_1"]
     for c in candidates:
         if c in gdf.columns:
             return c

@@ -74,7 +74,7 @@ def main() -> None:
     pca_table = Path(get(cfg, "paths", "pca_indicator_table", default="data/processed/pca_indicators.csv"))
     model_table = Path(get(cfg, "paths", "gtwr_model_table", default="data/processed/gtwr_model_table.csv"))
 
-    responses = get(cfg, "variables", "response_variables", default=["CWE", "CS", "HQ", "NDR", "SDR", "RHI", "CP"])
+    outcomes = get(cfg, "variables", "outcome_variables", default=["CWE", "CS", "HQ", "NDR", "SDR", "RHI", "CP"])
     explanatory = get(cfg, "variables", "explanatory_variables", default=["SSN", "GM", "IPLG", "RW"])
     lon_col = get(cfg, "variables", "coordinate_columns", "longitude", default="longitude")
     lat_col = get(cfg, "variables", "coordinate_columns", "latitude", default="latitude")
@@ -89,7 +89,7 @@ def main() -> None:
             "--output", out_dir / "validation" / "input_validation_report.csv",
             "--start-year", start,
             "--end-year", end,
-            "--responses", *responses,
+            "--outcomes", *outcomes,
             "--explanatory", *explanatory,
             "--lon-col", lon_col,
             "--lat-col", lat_col,
@@ -143,7 +143,7 @@ def main() -> None:
         "--lon-col", lon_col,
         "--lat-col", lat_col,
         "--year-col", time_col,
-        "--value-columns", *responses,
+        "--value-columns", *outcomes,
         "--plot",
     ], args.dry_run)
 
@@ -152,12 +152,12 @@ def main() -> None:
         py, "scripts/05_gtwr_gwr_twr.py",
         "--input", model_table,
         "--output-dir", regression_dir,
-        "--responses", *responses,
+        "--outcomes", *outcomes,
         "--explanatory", *explanatory,
         "--lon-col", lon_col,
         "--lat-col", lat_col,
         "--time-col", time_col,
-        "--twr-responses", "CP",
+        "--twr-outcomes", "CP",
     ], args.dry_run)
 
     # The combined coefficient table is used for general uncertainty diagnostics.

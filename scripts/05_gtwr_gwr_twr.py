@@ -28,7 +28,7 @@ inter-annual distance. GWR and TWR are special cases using only one distance.
 
 Outputs
 -------
-For each response variable, the script exports:
+For each outcome variable, the script exports:
     - local coefficients by observation
     - fitted values and residuals
     - bandwidth diagnostics for all candidate bandwidths
@@ -88,7 +88,7 @@ def set_style(dpi: int = 300) -> None:
 
 @dataclass
 class LocalRegressionResult:
-    response: str
+    outcome: str
     model: str
     bandwidth_spatial: float | None
     bandwidth_temporal: float | None
@@ -157,12 +157,12 @@ def prepare_design_matrix(df: pd.DataFrame, explanatory_columns: Sequence[str], 
     return x_matrix.astype(float), names
 
 
-def prepare_response(df: pd.DataFrame, response: str) -> np.ndarray:
-    if response not in df.columns:
-        raise ValueError(f"Response column {response!r} not found.")
-    y = pd.to_numeric(df[response], errors="coerce").values.astype(float)
+def prepare_outcome(df: pd.DataFrame, outcome: str) -> np.ndarray:
+    if outcome not in df.columns:
+        raise ValueError(f"Outcome column {outcome!r} not found.")
+    y = pd.to_numeric(df[outcome], errors="coerce").values.astype(float)
     if np.isnan(y).any():
-        raise ValueError(f"Response column {response!r} contains missing/non-numeric values.")
+        raise ValueError(f"Outcome column {outcome!r} contains missing/non-numeric values.")
     return y
 
 
@@ -243,7 +243,7 @@ def fit_local_model(
     weights_matrix: np.ndarray,
     coef_names: Sequence[str],
     metadata: pd.DataFrame,
-    response: str,
+    outcome: str,
     model: str,
     bandwidth_spatial: float | None,
     bandwidth_temporal: float | None,
@@ -276,12 +276,12 @@ def fit_local_model(
     coef_df = metadata.reset_index(drop=True).copy()
     for j, name in enumerate(coef_names):
         coef_df[f"coef_{name}"] = betas[:, j]
-    coef_df[f"fitted_{response}"] = fitted
-    coef_df[f"residual_{response}"] = residuals
+    coef_df[f"fitted_{outcome}"] = fitted
+    coef_df[f"residual_{outcome}"] = residuals
     coef_df["local_effective_n"] = effective_n
     coef_df["ridge_penalty_used"] = penalties
     summary = {
-        "response": response,
+        "outcome": outcome,
         "model": model,
         "bandwidth_spatial": bandwidth_spatial,
         "bandwidth_temporal": bandwidth_temporal,
@@ -323,7 +323,7 @@ def search_bandwidths(
     temporal_distance: np.ndarray,
     coef_names: Sequence[str],
     metadata: pd.DataFrame,
-    response: str,
+    outcome: str,
     model: str,
     spatial_grid: Sequence[float],
     temporal_grid: Sequence[float],
@@ -332,7 +332,7 @@ def search_bandwidths(
     best = None
     for bs, bt in candidate_pairs(model, spatial_grid, temporal_grid):
         weights = gaussian_weights(spatial_distance, temporal_distance, bs, bt, model)
-        _, _, _, summary = fit_local_model(x, y, weights, coef_names, metadata, response, model, bs, bt)
+        _, _, _, summary = fit_local_model(x, y, weights, coef_names, metadata, outcome, model, bs, bt)
         rows.append(summary)
         current = summary["AICc"]
         if best is None or current < best[2]:
@@ -395,9 +395,9 @@ def plot_coefficient_heatmap(coef_df: pd.DataFrame, coefficient_columns: Sequenc
 # -----------------------------------------------------------------------------
 
 
-def run_single_response(
+def run_single_outcome(
     df: pd.DataFrame,
-    response: str,
+    outcome: str,
     explanatory_columns: Sequence[str],
     metadata_columns: Sequence[str],
     lon_col: str,
@@ -408,9 +408,9 @@ def run_single_response(
     temporal_grid: Sequence[float],
     output_dir: Path,
 ) -> LocalRegressionResult:
-    logging.info("Fitting %s for response %s", model, response)
+    logging.info("Fitting %s for outcome %s", model, outcome)
     x, coef_names = prepare_design_matrix(df, explanatory_columns, add_intercept=True)
-    y = prepare_response(df, response)
+    y = prepare_outcome(df, outcome)
     coords, time = prepare_coordinates(df, lon_col, lat_col, time_col)
     spatial_distance = pairwise_euclidean(coords)
     temporal_distance = pairwise_time_distance(time)
@@ -423,38 +423,38 @@ def run_single_response(
         temporal_distance=temporal_distance,
         coef_names=coef_names,
         metadata=metadata,
-        response=response,
+        outcome=outcome,
         model=model,
         spatial_grid=spatial_grid,
         temporal_grid=temporal_grid,
     )
-    logging.info("Selected bandwidths for %s: spatial=%s temporal=%s", response, bs, bt)
+    logging.info("Selected bandwidths for %s: spatial=%s temporal=%s", outcome, bs, bt)
     weights = gaussian_weights(spatial_distance, temporal_distance, bs, bt, model)
-    coef_df, fitted, residuals, summary = fit_local_model(x, y, weights, coef_names, metadata, response, model, bs, bt)
+    coef_df, fitted, residuals, summary = fit_local_model(x, y, weights, coef_names, metadata, outcome, model, bs, bt)
 
-    response_dir = output_dir / response
-    response_dir.mkdir(parents=True, exist_ok=True)
-    write_table(search, response_dir / f"{response}_{model}_bandwidth_search.csv")
-    write_table(coef_df, response_dir / f"{response}_{model}_local_coefficients.csv")
-    write_table(pd.DataFrame([summary]), response_dir / f"{response}_{model}_summary.csv")
-    plot_bandwidth_search(search, response_dir / f"{response}_{model}_bandwidth_search")
+    outcome_dir = output_dir / outcome
+    outcome_dir.mkdir(parents=True, exist_ok=True)
+    write_table(search, outcome_dir / f"{outcome}_{model}_bandwidth_search.csv")
+    write_table(coef_df, outcome_dir / f"{outcome}_{model}_local_coefficients.csv")
+    write_table(pd.DataFrame([summary]), outcome_dir / f"{outcome}_{model}_summary.csv")
+    plot_bandwidth_search(search, outcome_dir / f"{outcome}_{model}_bandwidth_search")
     coefficient_cols = [f"coef_{name}" for name in coef_names if name != "intercept"]
-    plot_coefficient_heatmap(coef_df, coefficient_cols, response_dir / f"{response}_{model}_coefficient_heatmap", time_col=time_col)
-    return LocalRegressionResult(response, model, bs, bt, coef_df, fitted, residuals, summary, search)
+    plot_coefficient_heatmap(coef_df, coefficient_cols, outcome_dir / f"{outcome}_{model}_coefficient_heatmap", time_col=time_col)
+    return LocalRegressionResult(outcome, model, bs, bt, coef_df, fitted, residuals, summary, search)
 
 
 def run_model_workflow(
     input_path: str | Path,
     output_dir: str | Path,
-    response_columns: Sequence[str],
+    outcome_columns: Sequence[str],
     explanatory_columns: Sequence[str],
     lon_col: str = "longitude",
     lat_col: str = "latitude",
     time_col: str = "year",
     metadata_columns: Sequence[str] | None = None,
     default_model: str = "GTWR",
-    twr_responses: Sequence[str] | None = None,
-    gwr_responses: Sequence[str] | None = None,
+    twr_outcomes: Sequence[str] | None = None,
+    gwr_outcomes: Sequence[str] | None = None,
     spatial_grid: Sequence[float] | None = None,
     temporal_grid: Sequence[float] | None = None,
     sheet_name: str | int | None = 0,
@@ -468,21 +468,21 @@ def run_model_workflow(
         metadata_columns = [c for c in ["Province", "province", "year", "climate_zone", lon_col, lat_col] if c in df.columns]
     spatial_grid = list(spatial_grid or [0.08, 0.10, 0.11, 0.12, 0.13, 0.15, 0.20, 0.30])
     temporal_grid = list(temporal_grid or [0.10, 0.20, 0.27, 0.33, 0.50, 0.80])
-    twr_responses = set(twr_responses or [])
-    gwr_responses = set(gwr_responses or [])
+    twr_outcomes = set(twr_outcomes or [])
+    gwr_outcomes = set(gwr_outcomes or [])
 
     all_summaries = []
     combined_coefficients = []
-    for response in response_columns:
-        if response in twr_responses:
+    for outcome in outcome_columns:
+        if outcome in twr_outcomes:
             model = "TWR"
-        elif response in gwr_responses:
+        elif outcome in gwr_outcomes:
             model = "GWR"
         else:
             model = default_model.upper()
-        result = run_single_response(
+        result = run_single_outcome(
             df=df,
-            response=response,
+            outcome=outcome,
             explanatory_columns=explanatory_columns,
             metadata_columns=metadata_columns,
             lon_col=lon_col,
@@ -495,7 +495,7 @@ def run_model_workflow(
         )
         all_summaries.append(result.summary)
         tmp = result.coefficients.copy()
-        tmp.insert(0, "response", response)
+        tmp.insert(0, "outcome", outcome)
         tmp.insert(1, "model", model)
         combined_coefficients.append(tmp)
 
@@ -516,15 +516,15 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--input", required=True, help="Province-year modelling table.")
     parser.add_argument("--output-dir", required=True)
-    parser.add_argument("--responses", nargs="+", default=["CWE", "CS", "HQ", "NDR", "SDR", "RHI", "CP"])
+    parser.add_argument("--outcomes", nargs="+", default=["CWE", "CS", "HQ", "NDR", "SDR", "RHI", "CP"])
     parser.add_argument("--explanatory", nargs="+", default=["SSN", "GM", "IPLG", "RW"])
     parser.add_argument("--lon-col", default="longitude")
     parser.add_argument("--lat-col", default="latitude")
     parser.add_argument("--time-col", default="year")
     parser.add_argument("--metadata-columns", default="Province,year,climate_zone,longitude,latitude")
     parser.add_argument("--default-model", default="GTWR", choices=["OLS", "GWR", "TWR", "GTWR"])
-    parser.add_argument("--twr-responses", default="CP", help="Comma-separated responses fitted by TWR instead of default model.")
-    parser.add_argument("--gwr-responses", default="", help="Comma-separated responses fitted by GWR instead of default model.")
+    parser.add_argument("--twr-outcomes", default="CP", help="Comma-separated outcomes fitted by TWR instead of default model.")
+    parser.add_argument("--gwr-outcomes", default="", help="Comma-separated outcomes fitted by GWR instead of default model.")
     parser.add_argument("--spatial-grid", default="0.08,0.10,0.11,0.12,0.13,0.15,0.20,0.30")
     parser.add_argument("--temporal-grid", default="0.10,0.20,0.27,0.33,0.50,0.80")
     parser.add_argument("--sheet-name", default=0)
@@ -543,15 +543,15 @@ def main() -> None:
     summary = run_model_workflow(
         input_path=args.input,
         output_dir=args.output_dir,
-        response_columns=args.responses,
+        outcome_columns=args.outcomes,
         explanatory_columns=args.explanatory,
         lon_col=args.lon_col,
         lat_col=args.lat_col,
         time_col=args.time_col,
         metadata_columns=split_csv(args.metadata_columns),
         default_model=args.default_model,
-        twr_responses=split_csv(args.twr_responses),
-        gwr_responses=split_csv(args.gwr_responses),
+        twr_outcomes=split_csv(args.twr_outcomes),
+        gwr_outcomes=split_csv(args.gwr_outcomes),
         spatial_grid=parse_float_grid(args.spatial_grid),
         temporal_grid=parse_float_grid(args.temporal_grid),
         sheet_name=args.sheet_name,

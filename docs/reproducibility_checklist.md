@@ -11,7 +11,7 @@ Before running the workflow, verify the following items.
 - Official crop sown-area statistics are formatted as province-by-year tables.
 - PCA indicator tables contain the variables listed in the manuscript.
 - GTWR/TWR modelling tables contain coordinates, year, PCA components and
-  response variables.
+  outcome variables.
 
 ## Units
 
@@ -28,7 +28,7 @@ Before running the workflow, verify the following items.
 - PCA components summarize covariance among standardized indicators.
 - GWR, TWR and GTWR coefficients are local associations rather than causal
   effects.
-- The CP response is modelled using TWR when Moran's I is not significant.
+- The CP outcome is modelled using TWR when Moran's I is not significant.
 
 ## Code checks
 

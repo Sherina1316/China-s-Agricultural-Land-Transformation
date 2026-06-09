@@ -6,7 +6,7 @@
 | Cropland extent--crop sown-area diagnostic analysis | `scripts/02_cropland_sown_area_diagnostics.py`; `agri_transform.diagnostics` | province summary, national diagnostic timeseries |
 | Decoupling index and exact decomposition | `agri_transform.diagnostics.exact_decomposition` | extent effect, use-intensity effect, interaction effect |
 | PCA with varimax rotation | `scripts/03_pca_varimax.py`; `agri_transform.pca_tools` | rotated loadings, PCA scores, explained variance |
-| Moran's I for response variables | `scripts/04_spatial_autocorrelation.py`; `agri_transform.spatial` | Moran's I summary |
+| Moran's I for outcome variables | `scripts/04_spatial_autocorrelation.py`; `agri_transform.spatial` | Moran's I summary |
 | GWR/TWR/GTWR diagnostics | `scripts/05_gtwr_gwr_twr.py`; `agri_transform.regression` | local coefficients, bandwidth search, model diagnostics |
 | Monte Carlo uncertainty diagnostics | `scripts/06_uncertainty_analysis.py`; `agri_transform.uncertainty` | coefficient uncertainty summary |
 | Diagnostic figures | `scripts/07_plot_diagnostics.py`; `agri_transform.figures` | figure-ready PNG/PDF files |

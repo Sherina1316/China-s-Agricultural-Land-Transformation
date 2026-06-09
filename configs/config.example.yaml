@@ -21,7 +21,7 @@ parameters:
 
 variables:
   explanatory_variables: [SSN, GM, IPLG, RW]
-  response_variables: [CWE, CS, HQ, NDR, SDR, RHI, CP]
+  outcome_variables: [CWE, CS, HQ, NDR, SDR, RHI, CP]
   coordinate_columns:
     longitude: longitude
     latitude: latitude

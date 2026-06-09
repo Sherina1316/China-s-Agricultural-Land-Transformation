@@ -8,7 +8,7 @@ This script checks common issues before running the analysis:
     - missing year columns
     - non-numeric values in year tables
     - duplicated province names
-    - missing coordinate, time, response or explanatory columns in model tables
+    - missing coordinate, time, outcome or explanatory columns in model tables
     - obviously invalid values such as negative area or missing coordinates
 
 The output is a machine-readable validation report. The script does not modify
@@ -71,7 +71,7 @@ def validate_year_table(path: str | Path, label: str, start_year: int, end_year:
 def validate_model_table(
     path: str | Path,
     label: str,
-    response_columns: Sequence[str],
+    outcome_columns: Sequence[str],
     explanatory_columns: Sequence[str],
     lon_col: str,
     lat_col: str,
@@ -84,13 +84,13 @@ def validate_model_table(
     except Exception as exc:
         add_issue(issues, label, "error", "file", f"Cannot read table: {exc}")
         return issues
-    required = [lon_col, lat_col, time_col, *response_columns, *explanatory_columns]
+    required = [lon_col, lat_col, time_col, *outcome_columns, *explanatory_columns]
     for col in required:
         if col not in df.columns:
             add_issue(issues, label, "error", col, "Required model column is missing.")
             continue
         values = pd.to_numeric(df[col], errors="coerce") if col not in {"Province", "province"} else df[col]
-        if col in [lon_col, lat_col, time_col, *response_columns, *explanatory_columns] and pd.to_numeric(df[col], errors="coerce").isna().any():
+        if col in [lon_col, lat_col, time_col, *outcome_columns, *explanatory_columns] and pd.to_numeric(df[col], errors="coerce").isna().any():
             add_issue(issues, label, "error", col, "Column contains missing or non-numeric values.")
     if len(df) < len(explanatory_columns) + 5:
         add_issue(issues, label, "warning", "n", "Small sample size relative to number of explanatory variables.")
@@ -118,7 +118,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--output", required=True)
     parser.add_argument("--start-year", type=int, default=2000)
     parser.add_argument("--end-year", type=int, default=2023)
-    parser.add_argument("--responses", nargs="+", default=["CWE", "CS", "HQ", "NDR", "SDR", "RHI", "CP"])
+    parser.add_argument("--outcomes", nargs="+", default=["CWE", "CS", "HQ", "NDR", "SDR", "RHI", "CP"])
     parser.add_argument("--explanatory", nargs="+", default=["SSN", "GM", "IPLG", "RW"])
     parser.add_argument("--lon-col", default="longitude")
     parser.add_argument("--lat-col", default="latitude")
@@ -135,7 +135,7 @@ def main() -> None:
     if args.sown:
         issues.extend(validate_year_table(args.sown, "crop_sown_area", args.start_year, args.end_year, args.sheet_name))
     if args.model_table:
-        issues.extend(validate_model_table(args.model_table, "model_table", args.responses, args.explanatory, args.lon_col, args.lat_col, args.time_col, args.sheet_name))
+        issues.extend(validate_model_table(args.model_table, "model_table", args.outcomes, args.explanatory, args.lon_col, args.lat_col, args.time_col, args.sheet_name))
     report = write_report(issues, args.output)
     print(report.to_string(index=False))
 

@@ -85,7 +85,7 @@ def prepare_wide_year_table(
     end_year: int,
     sheet_name: str | int | None = 0,
     value_scale: float = 1.0,
-    province_candidates: Sequence[str] = ("Province", "province", "Region", "region", "省份", "地区"),
+    province_candidates: Sequence[str] = ("Province", "province", "Region", "region"),
     id_candidates: Sequence[str] = ("FID", "fid", "ID", "Id", "ORIG_FID"),
 ) -> tuple[pd.DataFrame, list[int]]:
     """Load a province-by-year table and return a clean wide table.

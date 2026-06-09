@@ -240,7 +240,7 @@ def grid_search_bandwidths(
 def run_models_from_table(
     input_table: str | Path,
     output_dir: str | Path,
-    response_columns: Sequence[str],
+    outcome_columns: Sequence[str],
     explanatory_columns: Sequence[str],
     lon_col: str = "longitude",
     lat_col: str = "latitude",
@@ -249,11 +249,11 @@ def run_models_from_table(
     spatial_grid: Sequence[float] | None = None,
     temporal_grid: Sequence[float] | None = None,
 ) -> pd.DataFrame:
-    """Run GTWR for spatially structured responses and TWR for CP by convention.
+    """Run GTWR for spatially structured outcomes and TWR for CP by convention.
 
     The input table should contain one row per province-year observation.
     Required columns include coordinates, year, explanatory components and
-    response variables.
+    outcome variables.
     """
     input_table = Path(input_table)
     if input_table.suffix.lower() in {".xlsx", ".xls"}:
@@ -269,9 +269,9 @@ def run_models_from_table(
     output_dir.mkdir(parents=True, exist_ok=True)
 
     summary_records = []
-    for response in response_columns:
-        model = "TWR" if response == cp_column else "GTWR"
-        y = df[response].to_numpy(float)
+    for outcome in outcome_columns:
+        model = "TWR" if outcome == cp_column else "GTWR"
+        y = df[outcome].to_numpy(float)
         best, search = grid_search_bandwidths(
             X=X,
             y=y,
@@ -288,11 +288,11 @@ def run_models_from_table(
             coef[col] = df[col].values[: len(coef)]
         if "Province" in df.columns:
             coef["Province"] = df["Province"].values[: len(coef)]
-        coef.to_csv(output_dir / f"{response}_{model}_local_coefficients.csv", index=False)
-        search.to_csv(output_dir / f"{response}_{model}_bandwidth_search.csv", index=False)
+        coef.to_csv(output_dir / f"{outcome}_{model}_local_coefficients.csv", index=False)
+        search.to_csv(output_dir / f"{outcome}_{model}_bandwidth_search.csv", index=False)
         summary_records.append(
             {
-                "dependent_variable": response,
+                "dependent_variable": outcome,
                 "model": model,
                 "bandwidth_spatial": best.bandwidth_spatial,
                 "bandwidth_temporal": best.bandwidth_temporal,

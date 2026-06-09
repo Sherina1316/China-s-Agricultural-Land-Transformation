@@ -5,12 +5,19 @@ __pycache__/
 .venv/
 .env
 .ipynb_checkpoints/
+.pytest_cache/
 
-# Data and outputs
-data/raw/
-data/boundaries/
-data/processed/
-outputs/
+# Data and outputs: keep the folder structure, ignore user data and generated files.
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+outputs/*
+!outputs/.gitkeep
+notebooks/*
+!notebooks/.gitkeep
+
+# Geospatial and raster data files
 *.tif
 *.tiff
 *.shp

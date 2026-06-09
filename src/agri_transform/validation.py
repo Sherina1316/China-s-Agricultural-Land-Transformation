@@ -32,7 +32,7 @@ def validate_year_table(
     table_name: str,
     start_year: int,
     end_year: int,
-    province_column_candidates: Sequence[str] = ("Province", "province", "Region", "region", "省份", "地区"),
+    province_column_candidates: Sequence[str] = ("Province", "province", "Region", "region"),
     sheet_name: str | int | None = 0,
 ) -> list[ValidationIssue]:
     """Validate a province-by-year table.
@@ -67,7 +67,7 @@ def validate_year_table(
 
 def validate_model_table(
     path: str | Path,
-    response_columns: Sequence[str],
+    outcome_columns: Sequence[str],
     explanatory_columns: Sequence[str],
     coordinate_columns: Sequence[str] = ("longitude", "latitude", "year"),
     sheet_name: str | int | None = 0,
@@ -79,7 +79,7 @@ def validate_model_table(
     except Exception as exc:  # noqa: BLE001
         return [_as_issue("model_table", f"Could not read table: {exc}")]
 
-    required = list(coordinate_columns) + list(response_columns) + list(explanatory_columns)
+    required = list(coordinate_columns) + list(outcome_columns) + list(explanatory_columns)
     missing = [c for c in required if c not in df.columns]
     if missing:
         issues.append(_as_issue("model_table", f"Missing required columns: {missing}"))
