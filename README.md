@@ -1,5 +1,4 @@
-# China Agricultural Land Transformation: Reproducible Analysis Code
-
+# China Agricultural Land Transformation
 This repository provides an English-only, template-path-based Python workflow for analysing China's agricultural land-use transformation from 2000 to 2023. The workflow separates physical cropland extent from statistical crop sown area, diagnoses their decoupling, constructs agricultural-use components, estimates spatial-temporal associations and generates publication-ready diagnostic figures.
 
 The repository does not include raw third-party datasets. Users should place their own data in the template folders described below.
